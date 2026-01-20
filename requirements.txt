@@ -1,0 +1,7 @@
+awswrangler==3.15.0
+Faker==40.1.2
+niafaker==0.1.1
+numpy==2.4.1
+pandas==2.3.3
+setuptools==80.9.0
+uuid==1.30

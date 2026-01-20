@@ -1,0 +1,71 @@
+{ "country": "Nigeria",
+
+  "platform_type": [
+    "ANDRIOD", 
+    "IOS", 
+    "WEB"
+    ],
+
+  "number_prefix_opt": [
+    "090",
+    "080",
+    "081",
+    "070"
+    ],
+
+  "total_amount_events": [
+    "CHECKOUT_STARTED",
+    "PAYMENT_AUTHORIZED",
+    "PAYMENT_FAILED",
+    "ORDER_PLACED"
+  ],
+
+  "payment_method_events": [
+    "PAYMENT_AUTHORIZED",
+    "ORDER_PLACED"
+  ],  
+
+  "payment_status_captured_events": [
+    "CHECKOUT_STARTED",
+    "PAYMENT_AUTHORIZED",
+    "ORDER_PLACED"
+  ],
+
+  "payment_status_refunded_events": [
+    "PAYMENT_FAILED"
+  ],
+
+  "carrier_events": [
+    "PAYMENT_AUTHORIZED",
+    "ORDER_PLACED",
+    "PACKED",
+    "SHIPPED",
+    "DELIVERED"
+  ],
+
+  "carrier_type":[
+    "UPS",
+    "GIG",
+    "RedStar",
+    "DHL"
+    ],
+
+  "payment_method_type": [
+    "CARD", 
+    "TRANSFER"
+    ],
+  
+  "all_events": [
+    "OPEN",
+    "USER_LOGIN",
+    "PRODUCT_VIEW",
+    "ADD_TO_CART",
+    "CHECKOUT_STARTED",
+    "PAYMENT_AUTHORIZED",
+    "PAYMENT_FAILED",
+    "ORDER_PLACED",
+    "PACKED",
+    "SHIPPED",
+    "DELIVERED"
+  ]
+}
