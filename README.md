@@ -34,5 +34,5 @@ Rather than waiting for live traffic, this system **synthetically generates real
 
 ## High-Level Architecture
 
-![image/infra.png]
+!(image/infra.png)
 
