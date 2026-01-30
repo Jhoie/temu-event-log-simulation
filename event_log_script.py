@@ -121,7 +121,7 @@ def generate_and_upload_events(num_events: int, json_path: str, s3_path: str):
           "error_code": error_code}
 
       simulated_data.append(temp_data)
-      logger.info(f"Simulated data created.")
+    logger.info(f"Simulated data created.")
 
     df = pd.DataFrame(simulated_data)
     wr.s3.to_parquet(
