@@ -5,5 +5,3 @@ provider "aws" {
 resource "aws_s3_bucket" "bucket1" {
   bucket = "temu-event-log-simulation-terraform-bucket"
 }
-
-
