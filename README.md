@@ -106,17 +106,8 @@ These fields are populated **only when relevant**, based on `event_type`.
 | carrier | Delivery company | PAYMENT_AUTHORIZED → DELIVERED |
 | tracking_number | Shipment ID | Only when carrier exists |
 
-### Payment Status Logic
+## Data Sample
 
-- `CAPTURED` → `CHECKOUT_STARTED`, `PAYMENT_AUTHORIZED`, `ORDER_PLACED`
-- `REFUNDED` → `PAYMENT_FAILED`
-- `None` → All other events
-
-## Reliability Simulation
-
-- `latency_ms` is generated for **every event**
-- `error_code = "INVALID LATENCY"` when latency exceeds the configured threshold
-- Otherwise, `error_code` is `None`
-
+![Data Sample](image/data_sample.png)
 
 
