@@ -1,6 +1,6 @@
 from event_log_script import generate_and_upload_events
 
-NUM_EVENTS = 10
+NUM_EVENTS = 400_000
 JSON_PATH = "temu_column_config.json"
 S3_PATH = "s3://temu-event-log-simulation-terraform-bucket/temu_dataset.parquet"
 
