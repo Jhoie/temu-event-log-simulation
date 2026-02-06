@@ -6,12 +6,11 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import awswrangler as wr
+import config_variables as cv
 import niafaker as nfake
 import pandas as pd
 from botocore.exceptions import ClientError
 from faker import Faker
-
-import config_variables as cv
 
 logging.basicConfig(
     filename="scripts/temu_event_simulation.log",
