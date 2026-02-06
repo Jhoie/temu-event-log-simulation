@@ -16,7 +16,7 @@ import config_variables as cv
 logging.basicConfig(
     filename="scripts/temu_event_simulation.log",
     level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s")
+    format="%(asctime)s || %(levelname)s || %(message)s")
 logger = logging.getLogger()
 
 
