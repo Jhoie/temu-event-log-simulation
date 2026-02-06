@@ -12,28 +12,40 @@ data "aws_iam_policy_document" "ec2_assume_role" {
 }
 
 resource "aws_iam_role" "ec2_role" {
-  name               = "temu-event-log-simulation-terraform-role"
+  name               = "${var.project_name}-${var.environment}-ec2-role"
   assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+
+    tags = merge(local.common_tags, {
+        Name = "${var.project_name}-${var.environment}-ec2-role"
+    })
 }
 
 # Attach S3 write policy to the role
 data "aws_iam_policy_document" "ec2_s3_policy" {
   statement {
     effect = "Allow"
+    actions = ["s3:ListBucket"]
 
-    actions = [
-      "s3:PutObject"
-    ]
+    resources = [aws_s3_bucket.event_logs.arn]
+  }
 
-    resources = [
-      "${aws_s3_bucket.bucket1.arn}/*"
-    ]
+  statement {
+    effect = "Allow"
+
+    actions = ["s3:PutObject", "s3:GetObject", "s3:AbortMultipartUpload"]
+
+    resources = ["${aws_s3_bucket.event_logs.arn}/*"]
   }
 }
 
 resource "aws_iam_policy" "ec2_s3_policy" {
-  name   = "temu-event-log-simulation-s3-terraform-policy"
+  name   = "${var.project_name}-${var.environment}-ec2-s3-policy"
+  description = "IAM policy for EC2 instance to access S3 bucket for event log storage"
   policy = data.aws_iam_policy_document.ec2_s3_policy.json
+
+  tags = merge(local.common_tags, {
+    Name = "${var.project_name}-${var.environment}-ec2-s3-policy"
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "attach_policy" {
@@ -43,6 +55,10 @@ resource "aws_iam_role_policy_attachment" "attach_policy" {
 
 # Instance profile for EC2
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
-  name = "temu-event-log-simulation-terraform-instance-profile"
+  name = "${var.project_name}-${var.environment}-instance-profile"
   role = aws_iam_role.ec2_role.name
+
+  tags = merge(local.common_tags, {
+    Name = "${var.project_name}-${var.environment}-instance-profile"
+  })
 }
