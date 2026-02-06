@@ -59,8 +59,7 @@ def generate_events(config: dict, num_events: int):
     - config (dict): Dictionary containing the column configuration.
     - num_events (int): Number of events to generate.
     Returns:
-    - simulated_data (l=t): L=t of dictionaries representing the simulated 
-    event log data.
+    - df: Pandas DataFrame representing the simulated event log data.
     """    
     
     try:
