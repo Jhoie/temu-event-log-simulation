@@ -14,7 +14,7 @@ from faker import Faker
 import config_variables as cv
 
 logging.basicConfig(
-    filename="temu_event_simulation.log",
+    filename="scripts/temu_event_simulation.log",
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s")
 logger = logging.getLogger()
