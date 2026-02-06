@@ -6,21 +6,32 @@ on:
       - "**"
     paths:
       - "**.py"
-      
+  pull_request:
+    paths:
+      - "**.py"
+
 jobs:
   lint:
-    name: checkout
+    name: lint
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: install dependencies
-        run: pip install -r requirements.txt
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
 
-      - name: Running isort.
-        run: isort --check-only  .
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Running isort
+        run: isort --check-only .
 
       - name: Running flake8
         run: flake8 .
