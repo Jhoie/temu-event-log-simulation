@@ -1,113 +1,83 @@
-# Temu Event Log Simulation
-## Overview
-
-This project simulates high-volume e-commerce event logs for **Temu’s Nigeria launch** using cloud-native infrastructure and realistic customer behavior.
-
-The system provisions AWS infrastructure with **Terraform**, runs a **Python-based event generator on an EC2 instance**, and writes **append-only event logs to Amazon S3**. These logs are designed to validate downstream ETL pipelines, analytics models, and scaling assumptions *before real production traffic exists*.
-
-This is a **production-style data platform simulation**, not a tutorial project.
-
+# Temu Nigeria Event Log Simulation
+Simulating high-volume e-commerce event logs using Terraform, IAM, EC2, S3, and Python.
 
 ## Business Context
+Temu’s launch in Nigeria represented a high-growth, high-traffic expansion into an existing e-commerce market. Before real users interacted with the platform at scale, the data team validated that event ingestion, storage, and downstream pipelines would reliably handle large volumes of diverse user activity.
 
-When Temu expanded to Nigeria, the data platform engineering team needed to test:
+This project simulates that pre-launch scenario by generating realistic Nigerian e-commerce event logs at scale. The goal is to test data platform readiness before production traffic hits, rather than reacting to failures after the fact.
 
-- Event ingestion at scale  
-- Order and payment lifecycle modeling  
-- Reliability and failure scenarios  
-- Data partitioning strategies for analytics  
 
-Rather than waiting for live traffic, this system **synthetically generates realistic Nigerian e-commerce activity**, closely mirroring how users interact across web and mobile platforms.
+## Project Overview
 
-## What This System Does
+This system generates synthetic, append-only e-commerce event logs that mirror real user behavior across the full customer lifecycle. A Python generator runs on an Amazon EC2 instance and produces 2.1 million events per execution, writing the output to Amazon S3 as Parquet files.
 
-- Provisions AWS infrastructure using **Terraform**
-- Creates an **EC2 instance** with least-privilege IAM access
-- Runs a **Python event generator** on the instance
-- Generates **400,000–500,000 events per run**
-- Writes **Parquet event logs** to **Amazon S3**
-- Produces **append-only, time-sequenced datasets**
+All infrastructure is provisioned using Terraform, and the system is designed to operate under real cloud permissions and security constraints.
+
 
 ## High-Level Architecture
 
-![Architecture Diagram](image/infra.png)
+**Terraform → EC2 (Python generator + chunking) → S3 (Parquet event logs) → Downstream Pipeline**
+
+![Architecture Diagram](image/temu-architecture-image.png)
+- Terraform provisions all required AWS resources
+- EC2 executes the event generation logic
+- Event logs are written to S3 in chunked Parquet files
+- Outputs are designed for consumption by downstream pipelines
 
 
-## Infrastructure Stack
+## Infrastructure
 
-### Provisioned with Terraform
+Infrastructure is provisioned using Terraform to ensure reproducibility and security.
 
-- **Amazon S3**
-  - Stores generated event logs
-- **Amazon EC2**
-  - Executes the Python event generator
-- **IAM**
-  - Least-privilege permissions allowing EC2 to write to S3
+Provisioned resources include:
 
-Infrastructure is fully reproducible using Terraform.
+- Amazon S3 bucket for event logs  
+  - Versioning enabled  
+  - Server-side encryption  
+  - Public access blocked  
+- IAM role and policy with least-privilege S3 access  
+- EC2 instance with attached instance profile  
+- Security group restricting SSH access to a specified CIDR  
+- Key pair managed through Terraform  
 
-## Event Model
 
-**Grain**
+## Event Logs
 
-- **1 row = 1 event**
-- Each row represents a single action at a specific timestamp
+The dataset is modeled as an append-only event log.
 
-## Event Types
+- **Grain:** one row represents a single event at a specific point in time
+- **Event coverage:** full e-commerce lifecycle, from app open to delivery
+- **Design choice:** state changes are represented as new events, not updates
 
-The generator produces the following **11 event types**:
 
-### User Lifecycle
-- `OPEN`
-- `USER_LOGIN`
+## Data Dictionary
 
-### Engagement
-- `PRODUCT_VIEW`
-- `ADD_TO_CART`
+![Data Dictionary](image/data_structure.png)
 
-### Checkout & Payments
-- `CHECKOUT_STARTED`
-- `PAYMENT_AUTHORIZED`
-- `PAYMENT_FAILED`
+- Column names and data types  
+- Field descriptions  
+- Conditional dependencies  
+- Allowed and expected values  
 
-### Orders & Fulfillment
-- `ORDER_PLACED`
-- `PACKED`
-- `SHIPPED`
-- `DELIVERED`
+All generation rules are driven by a JSON configuration file. 
 
-## Event Log Schema
 
-### Core Columns
+## Chunking Strategy
 
-| Column | Type | Description |
-|------|-----|-------------|
-| event_id | UUID | Unique event identifier |
-| event_ts | TIMESTAMP | When the event occurred |
-| event_type | STRING | Type of event |
-| customer_id | STRING | Unique Temu customer |
-| name | STRING | Customer name |
-| phone_number | STRING | Customer phone number |
-| address | STRING | Customer address |
-| email | STRING | Customer email |
-| platform | STRING | ANDRIOD, IOS, WEB |
-| latency_ms | INTEGER | Simulated platform response time |
-| error_code | STRING | Error flag when latency exceeds threshold |
+Each execution generates 2.1M events.
 
-## Conditional Columns
+To avoid holding the full dataset in memory at once, the generator processes data in fixed-size chunks of 500,000 rows. Each chunk is generated, written to S3, and released from memory before the next chunk is created.
 
-These fields are populated **only when relevant**, based on `event_type`.
+This improves stability, reduces memory pressure, and reflects common batch ingestion patterns used in production systems.
 
-| Column | Description | Condition |
-|------|-------------|-----------|
-| total_amount | Order/payment value | CHECKOUT_STARTED, PAYMENT_AUTHORIZED, PAYMENT_FAILED, ORDER_PLACED |
-| payment_method | CARD, USSD, TRANSFER, PAYPAL | PAYMENT_AUTHORIZED, ORDER_PLACED |
-| payment_status | CAPTURED or REFUNDED | Derived from payment events |
-| carrier | Delivery company | PAYMENT_AUTHORIZED → DELIVERED |
-| tracking_number | Shipment ID | Only when carrier exists |
+
+## Storage Layout
+
+Event logs are written to S3 using a unique run ID for each execution.
+
+![S3 Output](image/temu-s3.png)
 
 ## Data Sample
 
 ![Data Sample](image/data_sample.png)
-
 
