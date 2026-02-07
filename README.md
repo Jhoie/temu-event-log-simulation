@@ -81,3 +81,6 @@ Event logs are written to S3 using a unique run ID for each execution.
 
 ![Data Sample](image/data_sample.png)
 
+
+## Medium Article
+https://medium.com/@victoriousjvictor/23091222a91f
