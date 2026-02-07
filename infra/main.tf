@@ -8,7 +8,6 @@ locals {
 
 resource "aws_s3_bucket" "event_logs" {
   bucket = var.bucket_name
-  force_destroy = true
   tags  = merge(local.common_tags, {
     Name = "${var.project_name}-${var.environment}-bucket"
   })
